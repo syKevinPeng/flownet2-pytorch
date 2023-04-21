@@ -1,14 +1,3 @@
 #!/bin/bash
-cd ./networks/correlation_package
-rm -rf *_cuda.egg-info build dist __pycache__
-python3 setup.py install --user
-
-cd ../resample2d_package
-rm -rf *_cuda.egg-info build dist __pycache__
-python3 setup.py install --user
-
-cd ../channelnorm_package
-rm -rf *_cuda.egg-info build dist __pycache__
-python3 setup.py install --user
-
-cd ..
+cd networks
+printf './correlation_package\n./resample2d_package\n./channelnorm_package' | xargs -I@ bash -c "cd @ && python3 setup.py install --user"
