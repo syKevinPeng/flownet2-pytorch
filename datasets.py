@@ -9,7 +9,8 @@ from glob import glob
 import utils.frame_utils as frame_utils
 
 from scipy.misc import imread, imresize
-
+from matplotlib.pyplot import imread
+import PIL.
 class StaticRandomCrop(object):
     def __init__(self, image_size, crop_size):
         self.th, self.tw = crop_size
