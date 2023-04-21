@@ -7,10 +7,7 @@ import numpy as np
 
 from glob import glob
 import utils.frame_utils as frame_utils
-
-from scipy.misc import imread, imresize
 from matplotlib.pyplot import imread
-import PIL.
 class StaticRandomCrop(object):
     def __init__(self, image_size, crop_size):
         self.th, self.tw = crop_size
@@ -255,10 +252,13 @@ class ChairsSDHom(data.Dataset):
     self.crop_size = args.crop_size
     self.render_size = args.inference_size
     self.replicates = replicates
+    print(f'Root of ChairsSDHom: {root}')
 
     image1 = sorted( glob( join(root, dstype, 't0/*.png') ) )
     image2 = sorted( glob( join(root, dstype, 't1/*.png') ) )
-    self.flow_list = sorted( glob( join(root, dstype, 'flow/*.flo') ) )
+    self.flow_list = sorted( glob( join(root, dstype, 'flow/*.pfm') ) )
+    if len(image1) == 0 or len(image2) == 0 or len(self.flow_list) == 0:
+        raise(RuntimeError(f"Found 0 images in {root}//{dstype}."))
 
     assert (len(image1) == len(self.flow_list))
 

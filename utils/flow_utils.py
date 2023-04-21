@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os.path
+import re
 
 TAG_CHAR = np.array([202021.25], np.float32)
 
@@ -24,6 +25,48 @@ def readFlow(fn):
             # Reshape data into 3D array (columns, rows, bands)
             # The reshape here is for visualization, the original code is (w,h,2)
             return np.resize(data, (int(h), int(w), 2))
+
+def readPFM(file):
+    file = open(file, 'rb')
+
+    color = None
+    width = None
+    height = None
+    scale = None
+    endian = None
+
+    header = file.readline().rstrip()
+    if header == b'PF':
+        color = True
+    elif header == b'Pf':
+        color = False
+    else:
+        raise Exception('Not a PFM file.')
+
+    dim_match = re.match(rb'^(\d+)\s(\d+)\s$', file.readline())
+    if dim_match:
+        width, height = map(int, dim_match.groups())
+    else:
+        raise Exception('Malformed PFM header.')
+
+    scale = float(file.readline().rstrip())
+    if scale < 0: # little-endian
+        endian = '<'
+        scale = -scale
+    else:
+        endian = '>' # big-endian
+
+    data = np.fromfile(file, endian + 'f')
+    shape = (height, width, 3) if color else (height, width)
+
+    data = np.reshape(data, shape)
+    data = data[:,:,:2]
+    data = np.flipud(data)
+    return data
+# read .pfm file and store as a numpy array
+def readPFMflow(filename):
+	return readPFM(filename).astype(np.float32)
+
 
 def writeFlow(filename,uv,v=None):
     """ Write optical flow to file.
