@@ -213,11 +213,13 @@ if __name__ == '__main__':
             best_err = checkpoint['best_EPE']
             model_and_loss.module.model.load_state_dict(checkpoint['state_dict'])
             block.log("Loaded checkpoint '{}' (at epoch {})".format(args.resume, checkpoint['epoch']))
+        elif args.resume and not os.path.isfile(args.resume):
+            block.log("No checkpoint found at '{}'".format(args.resume))
+            quit()
 
         elif args.resume and args.inference:
             block.log("No checkpoint found at '{}'".format(args.resume))
             quit()
-
         else:
             block.log("Random initialization")
 
